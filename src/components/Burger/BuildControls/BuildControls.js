@@ -18,6 +18,7 @@ const buildControls = (props) =>(
                  label={i.label}
                  added={() => props.refToAdd(i.type)}
                  reduced={() => props.refToRed(i.type)}
+                 disabled={props.disabled[i.type]}
                 />
             ) )
         }
