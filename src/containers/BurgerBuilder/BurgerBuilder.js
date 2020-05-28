@@ -71,6 +71,9 @@ class BurgerBuilder extends Component{
         console.log('Inside cancel');
         this.setState({orderNowButton: false});
     }
+    checkoutHandler = () =>{
+        alert('Checkout');
+    }
     render(){
         let disabledInfo ={
             ...this.state.ingrediants
@@ -81,7 +84,11 @@ class BurgerBuilder extends Component{
         return (
             <Aux>
                 <Modal show={this.state.orderNowButton} modalClosed={this.purchaseCancelHandler}>
-                    <OrderSummary ingredients={this.state.ingrediants} />
+                    <OrderSummary 
+                        ingredients={this.state.ingrediants}
+                        cancelled={this.purchaseCancelHandler}
+                        checkout={this.checkoutHandler}
+                        totPrice={this.state.totalPrice} />
                 </Modal>
                 <Burger ingrediants={this.state.ingrediants}/>
                 <BuildControls 
