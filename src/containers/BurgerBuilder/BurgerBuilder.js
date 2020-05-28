@@ -2,6 +2,8 @@ import React , { Component } from 'react';
 import Aux from '../../hoc/Auxa';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
 const INGREDIENT_PRICES = {
     salad:0.5,
@@ -21,7 +23,8 @@ class BurgerBuilder extends Component{
             meat:0
         },
         totalPrice:5,
-        purchasable: false
+        purchasable: false,
+        orderNowButton: false
     };
 
     updatePurchaseState = (ing) =>{
@@ -61,6 +64,13 @@ class BurgerBuilder extends Component{
         this.updatePurchaseState(updatedIngredients);
     }
 
+    purchaseHandler = () =>{
+        this.setState({orderNowButton: true});
+    }
+    purchaseCancelHandler = () =>{
+        console.log('Inside cancel');
+        this.setState({orderNowButton: false});
+    }
     render(){
         let disabledInfo ={
             ...this.state.ingrediants
@@ -70,12 +80,16 @@ class BurgerBuilder extends Component{
         }
         return (
             <Aux>
+                <Modal show={this.state.orderNowButton} modalClosed={this.purchaseCancelHandler}>
+                    <OrderSummary ingredients={this.state.ingrediants} />
+                </Modal>
                 <Burger ingrediants={this.state.ingrediants}/>
                 <BuildControls 
                 refToAdd={this.addIngredientHandler}
                 refToRed={this.removeIngredientHandler}
                 disabled={disabledInfo}
                 purchasable={this.state.purchasable}
+                ordered={this.purchaseHandler}
                 price={this.state.totalPrice}
                 />
             </Aux>
