@@ -5,12 +5,17 @@ import classes from './SideDrawer.css';
 import BackDrop from '../../UI/Backdrop/Backdrop';
 import Aux from '../../../hoc/Auxa';
 
+
 const sideDrawer = (props) =>{
 
+    let attachedClasses = [classes.Drawer,classes.Close];
+    if(props.open){
+        attachedClasses = [classes.Drawer,classes.Open];
+    }
     return (
         <Aux>
-            <BackDrop show={true}/>
-            <div className={classes.Drawer}>
+            <BackDrop show={props.open} backdropClicked={props.closed}/>
+            <div className={attachedClasses.join(' ')}>
                 <Logo height="10%"/>
                 <nav>
                     <NavigationItems />
