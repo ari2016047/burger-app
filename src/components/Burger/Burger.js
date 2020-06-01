@@ -5,9 +5,9 @@ import Ingredient from './Ingredient/Ingredient';
 
 //Array(3) means an ampty array of 3 elements
 const burger = (props) =>{
-    let transformedIngrediants = Object.keys(props.ingrediants)
+    let transformedingredients = Object.keys(props.ingredients)
     .map(ing =>{
-        return [...Array(props.ingrediants[ing])].map((_,index)=>{
+        return [...Array(props.ingredients[ing])].map((_,index)=>{
             return <Ingredient key={ing+index} type={ing}/>;
         });
     })
@@ -15,14 +15,14 @@ const burger = (props) =>{
         return accumulator.concat(item);
     },[]);
 
-    if(transformedIngrediants.length === 0){
-        transformedIngrediants = <p>Please choose Ingrediants</p>;
+    if(transformedingredients.length === 0){
+        transformedingredients = <p>Please choose ingredients</p>;
     }
-    console.log(transformedIngrediants);
+    console.log(transformedingredients);
     return (
         <div className={classes.Burger}>
             <Ingredient type="bread-top"/>
-            {transformedIngrediants}
+            {transformedingredients}
             <Ingredient type="bread-bottom"/>
         </div>
     );
