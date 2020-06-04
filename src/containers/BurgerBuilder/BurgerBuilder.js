@@ -20,18 +20,23 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component{
     state = {
-        ingredients: {
-            salad: 0,
-            bacon:0,
-            cheese:0,
-            meat:0
-        },
+        ingredients: null,
         totalPrice:5,
         purchasable: false,
         orderNowButton: false,
-        loading:false
+        loading:false,
+        error: false
     };
 
+    componentDidMount = ()=> {
+        axios.get('/ingredients.json')
+            .then(response =>{
+                this.setState({ingredients: response.data});
+            })
+            .catch(err =>{
+                this.setState({error: err});
+            }); 
+    }
     updatePurchaseState = (ing) =>{
         let sum_of_count_of_ing = Object.keys(ing)
         .map(i => {
@@ -104,30 +109,39 @@ class BurgerBuilder extends Component{
         for(let i in disabledInfo){
             disabledInfo[i] = disabledInfo[i]<=0;
         }
+        let orderSummary = null;
+        let burger = this.state.error? <p style={{textAlign: "center"}}>Ingredients cannot be loaded from DB</p>:<Spinner />;
 
-        let orderSummary = <OrderSummary 
+        if(this.state.ingredients){
+            burger = (
+                    <Aux>
+                        <Burger ingredients={this.state.ingredients}/>
+                        <BuildControls 
+                        refToAdd={this.addIngredientHandler}
+                        refToRed={this.removeIngredientHandler}
+                        disabled={disabledInfo}
+                        purchasable={this.state.purchasable}
+                        ordered={this.purchaseHandler}
+                        price={this.state.totalPrice}
+                        />
+                    </Aux>
+                    );
+            orderSummary = <OrderSummary 
                             ingredients={this.state.ingredients}
                             cancelled={this.purchaseCancelHandler}
                             checkout={this.checkoutHandler}
-                            totPrice={this.state.totalPrice} />;
-        if(this.state.loading){
-            orderSummary = <Spinner/>
+                            totPrice={this.state.totalPrice}
+                        />;
+            if(this.state.loading){
+                orderSummary = <Spinner/>
+            }
         }
-
         return (
             <Aux>
                 <Modal show={this.state.orderNowButton} modalClosed={this.purchaseCancelHandler}>
                     {orderSummary}
                 </Modal>
-                <Burger ingredients={this.state.ingredients}/>
-                <BuildControls 
-                refToAdd={this.addIngredientHandler}
-                refToRed={this.removeIngredientHandler}
-                disabled={disabledInfo}
-                purchasable={this.state.purchasable}
-                ordered={this.purchaseHandler}
-                price={this.state.totalPrice}
-                />
+                {burger}
             </Aux>
         );
     }
