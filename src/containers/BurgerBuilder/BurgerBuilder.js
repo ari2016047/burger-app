@@ -105,6 +105,7 @@ class BurgerBuilder extends Component{
         for(let i in this.state.ingredients){
             queryParams.push(encodeURIComponent(i)+'='+encodeURIComponent(this.state.ingredients[i]));
         }
+        queryParams.push('price='+this.state.totalPrice);
         const queryString = queryParams.join('&');
         this.props.history.push({
             pathname: '/checkout',
@@ -113,7 +114,6 @@ class BurgerBuilder extends Component{
         //http://localhost:3000/checkout?bacon=1&cheese=0&meat=1&salad=1
     }
     render(){
-        console.log(this.props);
         let disabledInfo ={
             ...this.state.ingredients
         };
