@@ -8,12 +8,54 @@ import Input from '../../../components/UI/form/Input';
 
 class ContactData extends Component{
     state={
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postalCode: ''
-        },
+        orderForm:{
+            name: {
+                elememtType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    name:'name',
+                    placeholder: 'Your Name'
+                },
+                value: ''
+            },
+            email: {
+                elememtType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    name:'email',
+                    placeholder: 'Your Email'
+                },
+                value: ''
+            },
+            street: {
+                elememtType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    name:'street',
+                    placeholder: 'street'
+                },
+                value: ''
+            },
+            postal: {
+                elememtType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    name: 'postal',
+                    placeholder: 'Postal Code'
+                },
+                value: ''
+            },
+            deliveryMethod:{
+                elememtType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'fastest', displayValue: 'Fastest'},
+                        {value: 'cheapest', displayValue: 'Cheapest'}
+                    ]
+                },
+                value: ''   
+            }
+            },        
         loading: false
     }
 
@@ -42,12 +84,25 @@ class ContactData extends Component{
 
     }
     render(){
+        let formElementArray = [];
+        for(let key in this.state.orderForm){
+            formElementArray.push(
+                {
+                    id: key,
+                    config: this.state.orderForm[key]
+                }
+            );
+        }
         let formData=(
             <form >
-                <Input intype="input" type="text" name="name" placeholder="Your Name" />
-                <Input intype="input" type="email" name="email" placeholder="Your Email" />
-                <Input intype="input" type="text" name="street" placeholder="Street" />
-                <Input intype="input" type="text" name="postal" placeholder="Postal Code" />
+                {formElementArray.map(formElem =>(
+                    <Input 
+                    key={formElem.id}
+                    elememtType={formElem.config.elememtType} 
+                    elementConfig={formElem.config.elementConfig}
+                    value={formElem.config.value}
+                    />
+                ))}
                 <Button btnType="Success" clicked={this.orderHandler}>Order</Button>
             </form>
         );
