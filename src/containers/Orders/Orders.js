@@ -27,20 +27,27 @@ class Orders extends Component{
     }
 
     render(){
-        let orders = this.state.orders.map(order =>(
-            <Order
-             key={order.id}
-             ingredients={order.ingredients}
-             customer={order.customer}
-             price={+order.price}
-            />
-        ));
+        let orders;
+        if(this.state.orders.length === 0){
+            orders = <h3 style={{textAlign: 'center'}}>No Orders yet !!</h3>;
+        }
+        else{
+            orders = this.state.orders.map(order =>(
+                <Order
+                 key={order.id}
+                 ingredients={order.ingredients}
+                 customer={order.customer}
+                 price={+order.price}
+                />
+            ));
+        }
         if(this.state.loading){
             orders=<Spinner />;
         }
 
         return(
             <div>
+                <h2 style={{textAlign: 'center'}}>Your Orders : </h2>
                 {orders}
             </div>
         );

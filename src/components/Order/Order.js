@@ -27,6 +27,7 @@ const order = (props) =>{
         <div className={classes.Order}>
             <p>Ingredients: {ingredientOutput}</p>
             <p> Price: Rupees {props.price.toFixed(2)}</p> 
+            {/* <p> Deliver To:{props.customer}</p> */}
         </div>
     );
 }
