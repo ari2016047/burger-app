@@ -8,6 +8,8 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axios from '../../axios-order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import {connect} from 'react-redux';
+import * as actionTypes from '../../store/actions';
 
 const INGREDIENT_PRICES = {
     salad:0.5,
@@ -20,7 +22,6 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component{
     state = {
-        ingredients: null,
         totalPrice:5,
         purchasable: false,
         orderNowButton: false,
@@ -29,13 +30,13 @@ class BurgerBuilder extends Component{
     };
 
     componentDidMount = ()=> {
-        axios.get('/ingredients.json')
-            .then(response =>{
-                this.setState({ingredients: response.data});
-            })
-            .catch(err =>{
-                this.setState({error: err});
-            }); 
+        // axios.get('/ingredients.json')
+        //     .then(response =>{
+        //         this.setState({ingredients: response.data});
+        //     })
+        //     .catch(err =>{
+        //         this.setState({error: err});
+        //     }); 
     }
     updatePurchaseState = (ing) =>{
         let sum_of_count_of_ing = Object.keys(ing)
@@ -115,7 +116,7 @@ class BurgerBuilder extends Component{
     }
     render(){
         let disabledInfo ={
-            ...this.state.ingredients
+            ...this.props.ings
         };
         for(let i in disabledInfo){
             disabledInfo[i] = disabledInfo[i]<=0;
@@ -123,13 +124,13 @@ class BurgerBuilder extends Component{
         let orderSummary = null;
         let burger = this.state.error? <p style={{textAlign: "center"}}>Ingredients cannot be loaded from DB</p>:<Spinner />;
 
-        if(this.state.ingredients){
+        if(this.props.ings){
             burger = (
                     <Aux>
-                        <Burger ingredients={this.state.ingredients}/>
+                        <Burger ingredients={this.props.ings}/>
                         <BuildControls 
-                        refToAdd={this.addIngredientHandler}
-                        refToRed={this.removeIngredientHandler}
+                        refToAdd={this.props.onIngredientAdded}
+                        refToRed={this.props.onIngredientRemoved}
                         disabled={disabledInfo}
                         purchasable={this.state.purchasable}
                         ordered={this.purchaseHandler}
@@ -138,7 +139,7 @@ class BurgerBuilder extends Component{
                     </Aux>
                     );
             orderSummary = <OrderSummary 
-                            ingredients={this.state.ingredients}
+                            ingredients={this.props.ings}
                             cancelled={this.purchaseCancelHandler}
                             checkout={this.checkoutHandler}
                             totPrice={this.state.totalPrice}
@@ -158,4 +159,23 @@ class BurgerBuilder extends Component{
     }
 }
 
-export default withErrorHandler(BurgerBuilder, axios);
+//state comes from reducer
+const mapStateToProps = (state) =>{
+    console.log(state);
+    return {
+        ings: state.ingredients
+    };
+};
+
+//react-redux gives dispatch helper which will call store.dispatch in background
+//onIncrementCounter holds the reference to dispatch method which will bw called onClick
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT , ingredientName:ingName }),
+        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT , ingredientName:ingName })
+    };
+};
+
+//connect() returns hoc which takes component as an arguement
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
